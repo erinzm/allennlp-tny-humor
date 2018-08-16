@@ -29,12 +29,12 @@ class TNYCaptionsDatasetReader(DatasetReader):
             reader = csv.DictReader(f)
             next(reader)
             for row in reader:
-                try:
-                    rating_counts = [int(float(row[r])) for r in ['unfunny', 'somewhat_funny', 'funny']]
-                    yield self.text_to_instance(row['caption'], rating_counts)
-                except Exception as _:
-                    print(row)
-                    raise
+                # skip rows from contests without absolute class counts.
+                if any(row.get(x) == '' for x in ['unfunny', 'somewhat_funny', 'funny']):
+                    continue
+
+                rating_counts = [int(float(row[r])) for r in ['unfunny', 'somewhat_funny', 'funny']]
+                yield self.text_to_instance(row['caption'], rating_counts)
 
     @overrides
     def text_to_instance(self, text: str, rating_counts: List[int]) -> Instance:
