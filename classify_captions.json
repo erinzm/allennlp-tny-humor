@@ -1,10 +1,11 @@
 {
+  "train_data_path": "../featurization/condensed.csv",
   "dataset_reader": {
-
+    "type": "tny_captions"
   },
   "trainer": {
     "num_epochs": 40,
     "patience": 10,
-    "cuda_device": 0
+    "cuda_device": -1,
   },
 }
