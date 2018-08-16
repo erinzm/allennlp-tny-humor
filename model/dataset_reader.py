@@ -16,7 +16,9 @@ logger = logging.getLogger(__name__)
 
 @DatasetReader.register("tny_captions")
 class TNYCaptionsDatasetReader(DatasetReader):
-    def __init__(self, tokenizer: Optional[Tokenizer] = None, token_indexers: Optional[Dict[str, TokenIndexer]] = None) -> None:
+    def __init__(self,
+                 tokenizer: Optional[Tokenizer] = None,
+                 token_indexers: Optional[Dict[str, TokenIndexer]] = None) -> None:
         super().__init__(False)
         self._tokenizer = tokenizer or WordTokenizer()
         self._token_indexers = token_indexers or {
