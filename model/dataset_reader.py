@@ -1,7 +1,7 @@
 import logging
 import csv
 import numpy as np
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from overrides import overrides
 from allennlp.data.dataset_readers.dataset_reader import DatasetReader
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 @DatasetReader.register("tny_captions")
 class TNYCaptionsDatasetReader(DatasetReader):
-    def __init__(self, tokenizer: Tokenizer = None, token_indexers: Dict[str, TokenIndexer] = None) -> None:
+    def __init__(self, tokenizer: Optional[Tokenizer] = None, token_indexers: Optional[Dict[str, TokenIndexer]] = None) -> None:
         super().__init__(False)
         self._tokenizer = tokenizer or WordTokenizer()
         self._token_indexers = token_indexers or {
@@ -33,7 +33,8 @@ class TNYCaptionsDatasetReader(DatasetReader):
                 if any(row.get(x) == '' for x in ['unfunny', 'somewhat_funny', 'funny']):
                     continue
 
-                rating_counts = [int(float(row[r])) for r in ['unfunny', 'somewhat_funny', 'funny']]
+                rating_counts = [int(float(row[r]))
+                                 for r in ['unfunny', 'somewhat_funny', 'funny']]
                 yield self.text_to_instance(row['caption'], rating_counts)
 
     @overrides
