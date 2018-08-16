@@ -1,0 +1,10 @@
+{
+  "dataset_reader": {
+
+  },
+  "trainer": {
+    "num_epochs": 40,
+    "patience": 10,
+    "cuda_device": 0
+  },
+}
