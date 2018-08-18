@@ -7,7 +7,7 @@ from allennlp.models.model import Model
 from allennlp.data.vocabulary import Vocabulary
 from allennlp.modules import TextFieldEmbedder, Seq2VecEncoder, FeedForward
 from allennlp.nn import InitializerApplicator, RegularizerApplicator
-from allennlp.training.metrics import CategoricalAccuracy
+from allennlp.training.metrics import CategoricalAccuracy, F1Measure
 
 
 @Model.register("caption_classifier")
@@ -29,9 +29,9 @@ class CaptionClassifier(Model):
         class_loss_weights = torch.Tensor(class_loss_weights)
         class_loss_weights = class_loss_weights / class_loss_weights.sum()
         self.loss = torch.nn.CrossEntropyLoss(weight=class_loss_weights)
-        self.metrics = {
-            "accuracy": CategoricalAccuracy(),
-        }
+        
+        self.metric_overall_accuracy = CategoricalAccuracy()
+        self.metric_class_accuracies = {c: F1Measure(positive_label=i) for i, c in enumerate(['unfunny', 'somewhat_funny', 'funny'])}
 
         initializer(self)
 
@@ -51,12 +51,17 @@ class CaptionClassifier(Model):
             winning_classes = rating_probs.argmax(dim=1)
 
             output_dict['loss'] = self.loss(logits, winning_classes)
-            for metric in self.metrics.values():
+            self.metric_overall_accuracy(logits, winning_classes.squeeze(-1))
+            for metric in self.metric_class_accuracies.values():
                 metric(logits, winning_classes.squeeze(-1))
 
         return output_dict
 
     @overrides
     def get_metrics(self, reset: bool = False) -> Dict[str, float]:
-        return {name: metric.get_metric(reset)
-                for name, metric in self.metrics.items()}
+        metrics = {'overall_accuracy': self.metric_overall_accuracy.get_metric(reset)}
+        for c, metric in self.metric_class_accuracies.items():
+            precision, recall, f1 = metric.get_metric(reset)
+            metrics[f'f1_{c}'] = f1
+ 
+        return metrics

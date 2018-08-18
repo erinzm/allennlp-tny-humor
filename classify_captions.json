@@ -62,7 +62,7 @@
     "optimizer": "adam",
     "num_epochs": 40,
     "patience": 10,
-    "validation_metric": "+accuracy",
+    "validation_metric": "+f1_funny",
     "cuda_device": 0
   }
 }
