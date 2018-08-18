@@ -2,8 +2,8 @@ import logging
 import csv
 import numpy as np
 from typing import Dict, List, Optional
-
 from overrides import overrides
+
 from allennlp.data.dataset_readers.dataset_reader import DatasetReader
 from allennlp.data.instance import Instance
 from allennlp.data.fields import TextField, ArrayField
