@@ -33,7 +33,7 @@
       "dropout": 0.2,
       "input_size": 1024,
       "hidden_size": 200,
-      "num_layers": 1
+      "num_layers": 2
     },
     "classifier_feedforward": {
       "input_dim": 400,
@@ -43,6 +43,7 @@
         "linear"
       ]
     },
+    // derived from inverse class frequencies
     "class_loss_weights": [
       1.28265798,
       6.34609842,
