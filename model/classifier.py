@@ -37,11 +37,13 @@ class CaptionClassifier(Model):
 
     @overrides
     def forward(self,
-                tokens: Dict[str, torch.Tensor],
+                context_tokens: Dict[str, torch.Tensor],
+                caption_tokens: Dict[str, torch.Tensor],
                 rating_probs: torch.Tensor):
-        embedded = self.text_field_embedder(tokens)
-        mask = allennlp.nn.util.get_text_field_mask(tokens)
-        encoded = self.encoder(embedded, mask)
+        caption_tokens = self.text_field_embedder(caption_tokens)
+        caption_mask = allennlp.nn.util.get_text_field_mask(caption_tokens)
+
+        encoded = self.encoder(torch.cat([caption_tokens]), caption_mask)
 
         logits = self.classifier_feedforward(encoded)
         output_dict = {'logits': logits}

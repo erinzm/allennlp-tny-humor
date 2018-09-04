@@ -44,10 +44,12 @@ class TNYCaptionsDatasetReader(DatasetReader):
     @overrides
     def text_to_instance(self, text: str, rating_counts: List[int]) -> Instance:
         tokens = self._tokenizer.tokenize(text)
-        text_field = TextField(tokens, token_indexers=self._token_indexers)
+        caption_text_field = TextField(tokens, token_indexers=self._token_indexers)
+        context_text_field = None
 
         rating_counts = np.array(rating_counts)
         rating_probs = rating_counts / rating_counts.sum()
 
-        return Instance({'tokens': text_field,
+        return Instance({'caption_tokens': caption_text_field,
+                         'context_tokens': context_text_field,
                          'rating_probs': ArrayField(rating_probs)})
